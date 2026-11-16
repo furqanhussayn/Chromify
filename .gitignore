@@ -1,13 +1,36 @@
-# Raw and processed dataset artifacts
+# Local CelebA data and dataset-specific records
 /data/raw/
 /data/processed/
+/data/annotations/
+/data/splits/
+/data/expansion_preview/
+/data/diagnostic_color_analysis.json
 
-# Model checkpoints and generated results
+# Common dataset and generated image files
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.tif
+*.tiff
+*.webp
+
+# Model checkpoints and generated experiment artifacts
 /checkpoints/
 /results/
+/logs/
+*.pt
+*.pth
+*.pkl
+*.ckpt
+*.onnx
+*.h5
+*.weights
+*.log
 
 # Python cache and virtual environments
 __pycache__/
+**/__pycache__/
 *.py[cod]
 *.pyo
 .venv/
@@ -16,5 +39,19 @@ venv/
 # Jupyter notebooks
 .ipynb_checkpoints/
 
-# Local environment files
+# Local environment and credentials
 .env
+.env.*
+!.env.example
+
+# IDE and operating-system temporary files
+.idea/
+.vscode/*.tmp
+.vscode/*.log
+*.swp
+*.swo
+*.suo
+*.user
+*.userosscache
+.DS_Store
+Thumbs.db

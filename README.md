@@ -18,18 +18,28 @@ The project aims to estimate the color information missing from grayscale portra
 2. A basic CNN
 3. A lightweight U-Net
 
-The current work is focused on dataset preparation, preprocessing, and a reliable training pipeline. The actual neural network models are not implemented yet.
+The current work includes dataset preparation, preprocessing, and baseline
+training experiments. Additional architecture implementations are organized
+under the architecture-first directories described above.
 
 ## Project structure
 
-- `data/raw/`: original dataset images
-- `data/processed/`: resized and converted images
-- `data/splits/`: dataset split files
-- `src/`: preprocessing, dataset, and model scaffolding code
-- `checkpoints/`: trained model checkpoints
-- `results/`: predictions and plots
+- `data/`: local-only dataset files; see [`data/README.md`](data/README.md)
+- `src/`: preprocessing, dataset, model, and training source code
+- `src/models/baselines/`: classical and initial baseline implementations
+- `src/models/unet_furqan/`: U-Net implementation owned by Furqan
+- `src/models/resnet_kazi/`: ResNet implementation owned by Kazi
+- `src/models/autoencoder_yasir/`: autoencoder implementation owned by Yasir
+- `src/models/mobilenetv2_huzaifa/`: MobileNetV2 implementation owned by Huzaifa
+- `src/training/`: matching architecture-first training workflows
+- `checkpoints/`: local-only trained model files
+- `results/`: local-only predictions, plots, and metrics
 - `notebooks/`: exploratory notebooks
 - `app/`: application-oriented notes or future UI code
+
+Architecture names come first in model, training, checkpoint, and result
+directory names. Existing baseline modules remain in place to avoid unnecessary
+changes; new implementations should use the architecture-first directories.
 
 ## Installation
 
@@ -57,7 +67,9 @@ Place your dataset images inside the folder below before running preprocessing:
 CHROMIFY/data/raw/
 ```
 
-The raw dataset should remain untouched. The preprocessing pipeline copies and processes the images into `data/processed/` without modifying the originals.
+The raw dataset should remain untouched. The preprocessing pipeline copies and
+processes the images into `data/processed/` without modifying the originals.
+Dataset files are intentionally excluded from Git; see [`data/README.md`](data/README.md).
 
 ## Run preprocessing
 
