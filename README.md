@@ -18,9 +18,10 @@ The project aims to estimate the color information missing from grayscale portra
 2. A basic CNN
 3. A lightweight U-Net
 
-The current work includes dataset preparation, preprocessing, and baseline
-training experiments. Additional architecture implementations are organized
-under the architecture-first directories described above.
+The current work includes dataset preparation, preprocessing, and completed
+corrected Random Forest and CNN baseline experiments. Additional architecture
+implementations are organized under the architecture-first directories described
+above.
 
 ## Project structure
 
@@ -83,9 +84,9 @@ This script reads images recursively from `data/raw/`, crops them to a 4:5 portr
 
 ## Development status
 
-CHROMIFY is currently in its dataset preparation stage.
-
-The project has the foundational preprocessing pipeline, dataset loaders, and split utilities in place. The model training and deep learning experiments are planned for a later stage.
+The dataset pipeline and corrected baseline experiments are complete. The next
+planned architecture is a lightweight U-Net, followed by additional
+architecture-specific experiments.
 
 ## Random Forest baseline
 
@@ -100,7 +101,37 @@ Run it from the project root:
 python -m src.training.train_random_forest
 ```
 
-CNN and U-Net models are not implemented yet.
+## Corrected baselines complete
+
+The corrected baselines use the CIELAB L channel as input and predict the
+normalized a and b channels. Both models were trained on the identity-disjoint
+5,000-image dataset with 4,000 training, 500 validation, and 500 test images.
+
+Corrected Random Forest test results:
+
+- MAE: `0.04289`
+- PSNR: `24.946 dB`
+- SSIM: `0.92237`
+
+Corrected CNN test results:
+
+- MAE: `0.04281`
+- PSNR: `24.962 dB`
+- SSIM: `0.93518`
+
+Test chroma diagnostics:
+
+| Statistic | Ground truth | Random Forest | CNN |
+|---|---:|---:|---:|
+| a standard deviation | 10.807 | 4.995 | 4.432 |
+| b standard deviation | 14.608 | 6.933 | 6.392 |
+| Mean chroma | 16.568 | 12.836 | 11.677 |
+| Near-neutral pixels | 25.497% | 23.756% | 27.409% |
+| Chroma above 40 | 5.868% | 0.00005% | 0% |
+
+The metrics improved after correcting the input convention, but both baselines
+still produce conservative chroma distributions. The U-Net experiment should
+address the limited spatial context before changing the loss function.
 
 
 

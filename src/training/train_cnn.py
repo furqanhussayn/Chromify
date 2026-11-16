@@ -137,6 +137,64 @@ def load_best_checkpoint(model: ColorizationCNN, device: torch.device) -> Dict[s
     }
 
 
+def resume_training(
+    model: ColorizationCNN,
+    optimizer: Adam,
+    train_loader: DataLoader,
+    val_loader: DataLoader,
+    criterion: nn.Module,
+    device: torch.device,
+    checkpoint_path: Path = CNN_CHECKPOINT_PATH,
+    additional_epochs: int = 10,
+    patience: int = 3,
+) -> Tuple[Dict[str, List[float]], Dict[str, float]]:
+    """Resume CNN training from a checkpoint with bounded validation patience."""
+    if additional_epochs < 1:
+        raise ValueError("additional_epochs must be positive.")
+    if patience < 1:
+        raise ValueError("patience must be positive.")
+    if not checkpoint_path.exists():
+        raise FileNotFoundError(f"CNN checkpoint not found: {checkpoint_path}")
+
+    checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    model.load_state_dict(checkpoint["model_state_dict"])
+    optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+    start_epoch = int(checkpoint["epoch"])
+    best_validation_loss = float(checkpoint["validation_loss"])
+    epochs_without_improvement = 0
+    history = {"train_loss": [], "validation_loss": []}
+
+    for offset in range(1, additional_epochs + 1):
+        epoch = start_epoch + offset
+        train_loss = run_epoch(model, train_loader, criterion, device, optimizer)
+        validation_loss = run_epoch(model, val_loader, criterion, device)
+        history["train_loss"].append(train_loss)
+        history["validation_loss"].append(validation_loss)
+        print(
+            f"Resumed epoch {epoch}: "
+            f"train_loss={train_loss:.6f}, validation_loss={validation_loss:.6f}"
+        )
+
+        if validation_loss < best_validation_loss:
+            best_validation_loss = validation_loss
+            epochs_without_improvement = 0
+            save_checkpoint(model, optimizer, epoch, validation_loss)
+        else:
+            epochs_without_improvement += 1
+            if epochs_without_improvement >= patience:
+                print("Resume early stopping triggered.")
+                break
+
+    return history, {
+        "start_epoch": start_epoch,
+        "best_epoch": int(
+            torch.load(checkpoint_path, map_location="cpu", weights_only=False)["epoch"]
+        ),
+        "best_validation_loss": best_validation_loss,
+        "epochs_completed": len(history["train_loss"]),
+    }
+
+
 def evaluate_cnn(
     model: ColorizationCNN,
     image_names: List[str],
