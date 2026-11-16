@@ -1,0 +1,20 @@
+# Raw and processed dataset artifacts
+/data/raw/
+/data/processed/
+
+# Model checkpoints and generated results
+/checkpoints/
+/results/
+
+# Python cache and virtual environments
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# Local environment files
+.env
